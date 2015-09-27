@@ -15,6 +15,7 @@ import android.widget.TextView;
 public class MainActivity extends Activity {
 
     private TextView tvLevel;
+    private BroadcastReceiver broadcastReceiver;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -23,20 +24,21 @@ public class MainActivity extends Activity {
 
         tvLevel = (TextView) findViewById(R.id.level);
 
-        registerReceiver(new BroadcastReceiver() {
+        broadcastReceiver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
-                if(intent.getAction().equals(Intent.ACTION_BATTERY_CHANGED)){
+                if (intent.getAction().equals(Intent.ACTION_BATTERY_CHANGED)) {
 
                     String state = "Stan wlasnie sprawdzony";
-                    if (isInitialStickyBroadcast()){
+                    if (isInitialStickyBroadcast()) {
                         state = "Brak aktualizacji";
                     }
                     tvLevel.setText(String.valueOf(intent.getIntExtra(BatteryManager.EXTRA_LEVEL, -1))
-                            + System.getProperty("line.separator")+ state);
+                            + System.getProperty("line.separator") + state);
                 }
             }
-        }, new IntentFilter(Intent.ACTION_BATTERY_CHANGED));
-    }
+        };
 
+        registerReceiver(broadcastReceiver, new IntentFilter(Intent.ACTION_BATTERY_CHANGED));
+    }
 }
